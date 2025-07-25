@@ -1,0 +1,2 @@
+# stocker
+Stock management app
