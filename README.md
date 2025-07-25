@@ -1,4 +1,4 @@
-# **Stock Management App**  
+# **Stocker**  
 A lightweight stock tracking and analytics tool designed for **small stores and coffee shops**. It helps store owners manage supplies, track usage, and make informed restocking decisions.
 
 ---
