@@ -14,6 +14,7 @@ class Item(Base):
     category_id = Column(Integer, ForeignKey("categories.id"))
     category = relationship("Category", back_populates="items")
     stock_history = relationship("StockHistory", back_populates="item")
+    restock_history = relationship("RestockHistory", back_populates="item")
 
 class Category(Base):
     __tablename__ = "categories"
@@ -28,10 +29,20 @@ class StockHistory(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     item_id = Column(Integer, ForeignKey("items.id"))
-    quantity = Column(Float, nullable=False)
-    change_amount = Column(Float, nullable=False)  # +5.0 for restock, -2.0 for usage
-    change_type = Column(String, nullable=False)   # "restock", "usage", "adjustment"
+    quantity = Column(Float, nullable=False)  # Current stock level
     date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    notes = Column(String, nullable=True)
+    notes = Column(String, nullable=True)  # "Weekly count", "Restock", etc.
     
     item = relationship("Item", back_populates="stock_history")
+
+class RestockHistory(Base):
+    __tablename__ = "restock_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    item_id = Column(Integer, ForeignKey("items.id"))
+    restock_amount = Column(Float, nullable=False)  # How much was added
+    date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    supplier = Column(String, nullable=True)  # Optional supplier info
+    notes = Column(String, nullable=True)  # Optional notes
+    
+    item = relationship("Item", back_populates="restock_history")
