@@ -4,7 +4,7 @@ from typing import Optional
 from .. import models
 from ..database import SessionLocal
 
-router = APIRouter(prefix="/stocks", tags=["Stock"])
+router = APIRouter(prefix="/stock", tags=["Stock"])
 
 # Dependency to get DB session
 def get_db():
@@ -20,6 +20,7 @@ def log_stock(
     item_id: int,
     quantity: float,
     notes: Optional[str] = None,
+    staff_name: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     # Check if item exists
@@ -31,7 +32,8 @@ def log_stock(
     stock_entry = models.StockHistory(
         item_id=item_id,
         quantity=quantity,
-        notes=notes
+        notes=notes,
+        staff_name=staff_name
     )
     db.add(stock_entry)
     
@@ -47,7 +49,8 @@ def log_stock(
         "item_name": item.name,
         "quantity": stock_entry.quantity,
         "date": stock_entry.date,
-        "notes": stock_entry.notes
+        "notes": stock_entry.notes,
+        "staff_name": stock_entry.staff_name
     }
 
 # PUT - Edit Stock Log
@@ -56,6 +59,7 @@ def edit_stock_log(
     stock_id: int,
     quantity: Optional[float] = None,
     notes: Optional[str] = None,
+    staff_name: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     stock_entry = db.query(models.StockHistory).filter(models.StockHistory.id == stock_id).first()
@@ -72,6 +76,9 @@ def edit_stock_log(
     if notes is not None:
         stock_entry.notes = notes
     
+    if staff_name is not None:
+        stock_entry.staff_name = staff_name
+    
     db.commit()
     db.refresh(stock_entry)
     
@@ -80,7 +87,8 @@ def edit_stock_log(
         "item_id": stock_entry.item_id,
         "quantity": stock_entry.quantity,
         "date": stock_entry.date,
-        "notes": stock_entry.notes
+        "notes": stock_entry.notes,
+        "staff_name": stock_entry.staff_name
     }
 
 # DELETE - Delete Stock Log
@@ -107,7 +115,8 @@ def get_all_stock_history(db: Session = Depends(get_db)):
             "item_name": entry.item.name if entry.item else None,
             "quantity": entry.quantity,
             "date": entry.date,
-            "notes": entry.notes
+            "notes": entry.notes,
+            "staff_name": entry.staff_name
         }
         for entry in stock_entries
     ]
@@ -131,7 +140,8 @@ def get_stock_history_for_item(item_id: int, db: Session = Depends(get_db)):
             "item_name": item.name,
             "quantity": entry.quantity,
             "date": entry.date,
-            "notes": entry.notes
+            "notes": entry.notes,
+            "staff_name": entry.staff_name
         }
         for entry in stock_entries
     ] 

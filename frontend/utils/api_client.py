@@ -73,18 +73,20 @@ class APIClient:
     # Stock Records
     def get_stock_records(self) -> List[Dict]:
         """Get all stock records"""
-        return self._make_request("GET", "/stocks/")
+        return self._make_request("GET", "/stock/")
     
-    def log_stock(self, item_id: int, quantity: float, notes: Optional[str] = None) -> Dict:
+    def log_stock(self, item_id: int, quantity: float, notes: Optional[str] = None, staff_name: Optional[str] = None) -> Dict:
         """Log a stock count"""
         params = {"item_id": item_id, "quantity": quantity}
         if notes:
             params["notes"] = notes
-        return self._make_request("POST", "/stocks/", params=params)
+        if staff_name:
+            params["staff_name"] = staff_name
+        return self._make_request("POST", "/stock/", params=params)
     
     def get_stock_records_for_item(self, item_id: int) -> List[Dict]:
         """Get stock records for specific item"""
-        return self._make_request("GET", f"/stocks/item/{item_id}")
+        return self._make_request("GET", f"/stock/item/{item_id}")
     
     # Restock Records
     def get_restock_records(self) -> List[Dict]:

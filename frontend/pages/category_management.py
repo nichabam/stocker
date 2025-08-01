@@ -116,5 +116,10 @@ with tab3:
 
 # Quick navigation
 st.markdown("---")
-if st.button("🏠 Back to Dashboard"):
-    st.switch_page("main.py")
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("🏠 Back to Dashboard"):
+        st.switch_page("main.py")
+with col2:
+    if st.button("📦 item Management"):
+        st.switch_page("pages/item_management.py")

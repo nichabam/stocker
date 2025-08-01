@@ -32,6 +32,7 @@ class StockHistory(Base):
     quantity = Column(Float, nullable=False)  # Current stock level
     date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     notes = Column(String, nullable=True)  # "Weekly count", "Restock", etc.
+    staff_name = Column(String, nullable=True)  # Staff member who logged the count
     
     item = relationship("Item", back_populates="stock_history")
 

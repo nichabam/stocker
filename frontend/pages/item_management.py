@@ -5,6 +5,13 @@ from modules.sidebar import sidebar
 # Sidebar
 sidebar()
 
+# Helper function to round numbers to 1 decimal place
+def round_number(value):
+    """Round number to 1 decimal place, handling None values"""
+    if value is None:
+        return 0.0
+    return round(float(value), 1)
+
 st.set_page_config(
     page_title="Item Management - Stocker",
     page_icon="📦",
@@ -43,17 +50,19 @@ with tab1:
         
         # Display items
         for item in filtered_items:
-            with st.expander(f"📦 {item.get('name', 'Unknown')} - {item.get('quantity', 0)} {item.get('unit', '')}"):
+            quantity = round_number(item.get('quantity', 0))
+            unit = item.get('unit', '')
+            with st.expander(f"📦 {item.get('name', 'Unknown')} - {quantity} {unit}"):
                 col1, col2, col3 = st.columns([2, 1, 1])
                 
                 with col1:
                     st.write(f"**Name:** {item.get('name', 'Unknown')}")
                     st.write(f"**Category:** {item.get('category_name', 'Unknown')}")
-                    st.write(f"**Unit:** {item.get('unit', 'Unknown')}")
+                    st.write(f"**Unit:** {unit}")
                 
                 with col2:
-                    current_stock = item.get('quantity', 0)
-                    threshold = item.get('restock_threshold', 0)
+                    current_stock = round_number(item.get('quantity', 0))
+                    threshold = round_number(item.get('restock_threshold', 0))
                     
                     if current_stock <= threshold:
                         st.error(f"⚠️ Low Stock ({current_stock}/{threshold})")
@@ -95,7 +104,7 @@ with tab2:
                 st.write("**Preview:**")
                 st.write(f"Name: {item_name}")
                 st.write(f"Unit: {unit}")
-                st.write(f"Threshold: {restock_threshold}")
+                st.write(f"Threshold: {round_number(restock_threshold)}")
                 st.write(f"Category: {selected_category_name}")
             
             if st.form_submit_button("Create Item"):
@@ -103,7 +112,7 @@ with tab2:
                     result = api_client.create_item(
                         name=item_name.strip(),
                         unit=unit.strip(),
-                        restock_threshold=restock_threshold,
+                        restock_threshold=round_number(restock_threshold),
                         category_id=selected_category_id
                     )
                     if result:
@@ -140,7 +149,7 @@ with tab3:
                     with col1:
                         new_name = st.text_input("New Name", value=item_to_edit.get('name', ''))
                         new_unit = st.text_input("New Unit", value=item_to_edit.get('unit', ''))
-                        new_threshold = st.number_input("New Threshold", min_value=0.0, value=float(item_to_edit.get('restock_threshold', 0)), step=0.1)
+                        new_threshold = st.number_input("New Threshold", min_value=0.0, value=round_number(item_to_edit.get('restock_threshold', 0)), step=0.1)
                     
                     with col2:
                         # Category selection for edit
@@ -161,7 +170,7 @@ with tab3:
                                 item_to_edit.get('id'),
                                 name=new_name.strip(),
                                 unit=new_unit.strip(),
-                                restock_threshold=new_threshold,
+                                restock_threshold=round_number(new_threshold),
                                 category_id=new_category_id
                             )
                             if result:

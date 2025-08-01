@@ -3,19 +3,29 @@ from datetime import datetime
 from utils.api_client import api_client
 from modules.sidebar import sidebar
 
+# Helper function to round numbers to 1 decimal place
+def round_number(value):
+    """Round number to 1 decimal place, handling None values"""
+    if value is None:
+        return 0.0
+    return round(float(value), 1)
+
 # Sidebar
 sidebar()
 
 # Page configuration
 st.set_page_config(
-    page_title="Dashboard",
+    page_title="Stocker - Cafe Inventory Management",
     page_icon="☕",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
+# API configuration
+API_BASE_URL = "http://localhost:8000"
+
 # Main dashboard page
-st.title("☕ Stocker")
+st.title("☕ Stocker - Cafe Inventory Management")
 st.markdown("---")
 
 # Get real data from API
@@ -36,7 +46,7 @@ with col2:
     if items:
         low_stock_items = len([
             item for item in items 
-            if item.get('quantity', 0) <= item.get('restock_threshold', 0)
+            if round_number(item.get('quantity', 0)) <= round_number(item.get('restock_threshold', 0))
         ])
     st.metric("Low Stock Items", low_stock_items)
 
@@ -58,6 +68,26 @@ st.subheader("Recent Activity")
 if stock_records:
     st.write("Recent stock counts:")
     for record in stock_records[:5]:  # Show last 5
-        st.write(f"- {record.get('item_name', 'Unknown')}: {record.get('quantity', 0)} on {record.get('date', 'Unknown')}")
+        quantity = round_number(record.get('quantity', 0))
+        staff_name = record.get('staff_name', 'Unknown')
+        item_name = record.get('item_name', 'Unknown')
+        date = record.get('date', 'Unknown')
+        
+        if staff_name and staff_name != 'Unknown':
+            st.write(f"- {item_name}: {quantity} (by {staff_name}) on {date}")
+        else:
+            st.write(f"- {item_name}: {quantity} on {date}")
 else:
     st.info("No stock records found. Start by logging some stock counts!")
+
+# Quick actions
+# st.subheader("Quick Actions")
+# col1, col2 = st.columns(2)
+
+# with col1:
+#     if st.button("📦 View Stock Management"):
+#         st.switch_page("pages/stock_management.py")
+
+# with col2:
+#     if st.button("📥 Log Restock"):
+#         st.switch_page("pages/restock_logging.py")
