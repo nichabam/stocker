@@ -61,15 +61,3 @@ if stock_records:
         st.write(f"- {record.get('item_name', 'Unknown')}: {record.get('quantity', 0)} on {record.get('date', 'Unknown')}")
 else:
     st.info("No stock records found. Start by logging some stock counts!")
-
-# Quick actions
-st.subheader("Quick Actions")
-col1, col2 = st.columns(2)
-
-with col1:
-    if st.button("📦 View Stock Management"):
-        st.switch_page("pages/stock_management.py")
-
-with col2:
-    if st.button("📥 Log Restock"):
-        st.switch_page("pages/2_Restock_Logging.py")
