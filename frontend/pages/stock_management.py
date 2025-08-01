@@ -13,9 +13,9 @@ st.set_page_config(
 
 st.title("📦 Stock Management")
 
-# Get items from API
+# Items section
 items = api_client.get_items()
-
+st.subheader("Items")
 if items:
     st.subheader("Current Stock Levels")
     

@@ -29,6 +29,17 @@ class APIClient:
         """Create a new category"""
         return self._make_request("POST", "/categories/", params={"name": name})
     
+    def update_category(self, category_id: int, name: str, description: Optional[str] = None) -> Dict:
+        """Update a category"""
+        params = {"name": name}
+        if description is not None:
+            params["description"] = description
+        return self._make_request("PUT", f"/categories/{category_id}", params=params)
+    
+    def delete_category(self, category_id: int) -> Dict:
+        """Delete a category"""
+        return self._make_request("DELETE", f"/categories/{category_id}")
+    
     # Items
     def get_items(self) -> List[Dict]:
         """Get all items"""
