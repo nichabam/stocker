@@ -1,7 +1,10 @@
 import streamlit as st
 from datetime import datetime
 from utils.api_client import api_client
-from modules.sidebar import sidebar
+from utils.auth import check_auth, show_logout_button
+
+# Check authentication first
+check_auth()
 
 # Helper function to round numbers to 1 decimal place
 def round_number(value):
@@ -10,9 +13,6 @@ def round_number(value):
         return 0.0
     return round(float(value), 1)
 
-# Sidebar
-sidebar()
-
 # Page configuration
 st.set_page_config(
     page_title="Stocker - Cafe Inventory Management",
@@ -20,6 +20,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Show logout button in sidebar
+show_logout_button()
 
 # API configuration
 API_BASE_URL = "http://localhost:8000"

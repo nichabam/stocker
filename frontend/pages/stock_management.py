@@ -1,9 +1,12 @@
 import streamlit as st
 from utils.api_client import api_client
-from modules.sidebar import sidebar
+from utils.auth import check_auth, show_logout_button
 
-# Sidebar
-sidebar()
+# Check authentication first
+check_auth()
+
+# Show logout button in sidebar
+show_logout_button()
 
 # Helper function to round numbers to 1 decimal place
 def round_number(value):
@@ -40,7 +43,7 @@ if items:
                     unit = item.get('unit', '')
                     with st.expander(f"{item.get('name', 'Unknown')} - {quantity} {unit}"):
                         col1, col2, col3 = st.columns(3)
-
+                        
                         with col1:
                             st.write(f"**Category:** {item.get('category_name', 'Unknown')}")
                         
@@ -54,7 +57,7 @@ if items:
                                 st.error(f"⚠️ Low Stock (Threshold: {threshold})")
                             else:
                                 st.success(f"✅ Good Stock (Threshold: {threshold})")
-                
+    
     with tab2:
         st.write("**Log Stock Counts:**")
         

@@ -1,9 +1,12 @@
 import streamlit as st
 from utils.api_client import api_client
-from modules.sidebar import sidebar
+from utils.auth import check_auth, show_logout_button
 
-# Sidebar
-sidebar()   
+# Check authentication first
+check_auth()
+
+# Show logout button in sidebar
+show_logout_button()
 
 st.set_page_config(
     page_title="Category Management - Stocker",
@@ -116,10 +119,5 @@ with tab3:
 
 # Quick navigation
 st.markdown("---")
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("🏠 Back to Dashboard"):
-        st.switch_page("main.py")
-with col2:
-    if st.button("📦 item Management"):
-        st.switch_page("pages/item_management.py")
+if st.button("🏠 Back to Dashboard"):
+    st.switch_page("main.py")
