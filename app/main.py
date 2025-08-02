@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from . import models
 from .database import engine
-from .routes import categories, items, stock_history, restock_history, analytics
+from .routes import categories, items, stock_history, restock_history, analytics, auth
 
 app = FastAPI()
 
@@ -22,6 +22,7 @@ app.include_router(items.router)
 app.include_router(stock_history.router)
 app.include_router(restock_history.router)
 app.include_router(analytics.router)
+app.include_router(auth.router)
 
 @app.get("/")
 def home():

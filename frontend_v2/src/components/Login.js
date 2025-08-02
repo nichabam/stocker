@@ -6,16 +6,25 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, CAFE_USERNAME, CAFE_PASSWORD } = useAuth();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const { login, register } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (login(username, password)) {
-      // Login successful - redirect will be handled by App.js
-    } else {
-      setError('Invalid username or password');
+    try {
+      const success = isRegistering 
+        ? await register(username, password)
+        : await login(username, password);
+      
+      if (success) {
+        // Login/Register successful - redirect will be handled by App.js
+      } else {
+        setError(isRegistering ? 'Registration failed' : 'Invalid username or password');
+      }
+    } catch (error) {
+      setError(error.response?.data?.detail || 'An error occurred');
     }
   };
 
@@ -74,21 +83,25 @@ const Login = () => {
           )}
 
           <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-            Login
+            {isRegistering ? 'Register' : 'Login'}
           </button>
         </form>
 
         <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
-          <h4 style={{ marginBottom: '10px', fontSize: '14px' }}>ℹ️ Login Credentials</h4>
-          <p style={{ margin: '5px 0', fontSize: '12px' }}>
-            <strong>Username:</strong> {CAFE_USERNAME}
-          </p>
-          <p style={{ margin: '5px 0', fontSize: '12px' }}>
-            <strong>Password:</strong> {CAFE_PASSWORD}
-          </p>
-          <p style={{ margin: '10px 0 0 0', fontSize: '11px', color: '#666' }}>
-            These credentials are for cafe staff use only.
-          </p>
+          <button
+            type="button"
+            onClick={() => setIsRegistering(!isRegistering)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#007bff',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
+          </button>
         </div>
       </div>
     </div>

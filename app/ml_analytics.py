@@ -71,7 +71,7 @@ class InventoryAnalytics:
             
         daily_consumption = self.calculate_daily_consumption(item_id)
         if daily_consumption <= 0:
-            return float('inf')  # Infinite if no consumption
+            return 999.0  # Large number instead of infinity
             
         return item.quantity / daily_consumption
     
@@ -232,6 +232,20 @@ class InventoryAnalytics:
         else:
             return 0.9
     
+    def _clean_json_values(self, data):
+        """Clean data to ensure JSON compatibility"""
+        if isinstance(data, dict):
+            return {k: self._clean_json_values(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._clean_json_values(item) for item in data]
+        elif isinstance(data, float):
+            if data == float('inf') or data == float('-inf'):
+                return 999.0 if data > 0 else -999.0
+            elif data != data:  # NaN check
+                return 0.0
+            return data
+        return data
+
     def run_full_analytics(self, item_id: int) -> Dict:
         """Run complete analytics for an item"""
         from . import models
@@ -250,7 +264,7 @@ class InventoryAnalytics:
         # Get menu recommendations
         menu_data = self.generate_menu_recommendations(item_id)
         
-        return {
+        result = {
             "item_id": item_id,
             "predictions": {
                 "restock_date": restock_date,
@@ -262,6 +276,9 @@ class InventoryAnalytics:
             "sales_performance": sales_data,
             "menu_recommendations": menu_data
         }
+        
+        # Clean the result to ensure JSON compatibility
+        return self._clean_json_values(result)
     
     def update_analytics_for_all_items(self):
         """Update analytics for all items"""

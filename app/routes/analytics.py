@@ -26,6 +26,10 @@ def get_item_predictions(item_id: int, db: Session = Depends(get_db)):
         return predictions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
+    except ValueError as e:
+        if "JSON" in str(e):
+            raise HTTPException(status_code=500, detail="Data serialization error - invalid values detected")
+        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
 
 @router.get("/restock-predictions")
 def get_all_restock_predictions(db: Session = Depends(get_db)):
@@ -40,6 +44,13 @@ def get_all_restock_predictions(db: Session = Depends(get_db)):
             restock_date, confidence = analytics.predict_restock_date(item.id)
             stock_life = analytics.predict_stock_life(item.id)
             optimal_quantity = analytics.predict_optimal_restock_quantity(item.id)
+            daily_consumption = analytics.calculate_daily_consumption(item.id)
+            
+            # Clean any potential infinity values
+            if stock_life == float('inf') or stock_life == float('-inf'):
+                stock_life = 999.0
+            if daily_consumption == float('inf') or daily_consumption == float('-inf'):
+                daily_consumption = 0.0
             
             predictions.append({
                 "item_id": item.id,
@@ -50,7 +61,7 @@ def get_all_restock_predictions(db: Session = Depends(get_db)):
                 "confidence": confidence,
                 "stock_life_days": stock_life,
                 "optimal_restock_quantity": optimal_quantity,
-                "daily_consumption": analytics.calculate_daily_consumption(item.id)
+                "daily_consumption": daily_consumption
             })
         except Exception as e:
             continue  # Skip items with errors

@@ -139,6 +139,57 @@ class APIClient {
   async updateAnalytics() {
     return this.makeRequest('POST', '/analytics/update-analytics');
   }
+
+  // Authentication
+  async login(username, password) {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+    
+    try {
+      const response = await this.api.post('/auth/login', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  }
+
+  async register(username, password) {
+    try {
+      const response = await this.api.post('/auth/register', null, {
+        params: { username, password }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  }
+
+  async verifyToken(token) {
+    try {
+      const response = await this.api.get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Add token to all requests
+  setAuthToken(token) {
+    if (token) {
+      this.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete this.api.defaults.headers.common['Authorization'];
+    }
+  }
 }
 
 export default new APIClient(); 

@@ -127,3 +127,13 @@ class MenuOptimization(Base):
     potential_revenue_loss = Column(Float, nullable=True)
     
     item = relationship("Item", back_populates="menu_optimization")
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    last_login = Column(DateTime, nullable=True)

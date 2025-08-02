@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import apiClient from '../utils/apiClient';
 
 const AuthContext = createContext();
 
@@ -13,46 +14,77 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
+  const [token, setToken] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // Simple authentication for single cafe (replicating Streamlit auth)
-  const CAFE_USERNAME = 'cafe';
-  const CAFE_PASSWORD = 'stock2024';
-
-  const login = (inputUsername, inputPassword) => {
-    if (inputUsername === CAFE_USERNAME && inputPassword === CAFE_PASSWORD) {
-      setIsAuthenticated(true);
-      setUsername(inputUsername);
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('username', inputUsername);
-      return true;
+  const login = async (inputUsername, inputPassword) => {
+    try {
+      const response = await apiClient.login(inputUsername, inputPassword);
+      if (response && response.access_token) {
+        setIsAuthenticated(true);
+        setUsername(inputUsername);
+        setToken(response.access_token);
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('username', inputUsername);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setUsername('');
-    localStorage.removeItem('isAuthenticated');
+    setToken('');
+    localStorage.removeItem('token');
     localStorage.removeItem('username');
   };
 
+  const register = async (inputUsername, inputPassword) => {
+    try {
+      const response = await apiClient.register(inputUsername, inputPassword);
+      if (response && response.message) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
-    const storedAuth = localStorage.getItem('isAuthenticated');
+    const storedToken = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
     
-    if (storedAuth === 'true' && storedUsername) {
-      setIsAuthenticated(true);
-      setUsername(storedUsername);
+    if (storedToken && storedUsername) {
+      // Verify token is still valid
+      apiClient.verifyToken(storedToken).then(isValid => {
+        if (isValid) {
+          setIsAuthenticated(true);
+          setUsername(storedUsername);
+          setToken(storedToken);
+        } else {
+          logout();
+        }
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
     }
   }, []);
 
   const value = {
     isAuthenticated,
     username,
+    token,
     login,
     logout,
-    CAFE_USERNAME,
-    CAFE_PASSWORD,
+    register,
+    loading,
   };
 
   return (
