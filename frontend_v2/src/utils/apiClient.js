@@ -107,6 +107,38 @@ class APIClient {
   async getRestockRecordsForItem(itemId) {
     return this.makeRequest('GET', `/restocks/item/${itemId}`);
   }
+
+  // Analytics
+  async getRestockPredictions() {
+    return this.makeRequest('GET', '/analytics/restock-predictions');
+  }
+
+  async getCostOptimization() {
+    return this.makeRequest('GET', '/analytics/cost-optimization');
+  }
+
+  async getSalesPerformance() {
+    return this.makeRequest('GET', '/analytics/sales-performance');
+  }
+
+  async getMenuRecommendations() {
+    return this.makeRequest('GET', '/analytics/menu-recommendations');
+  }
+
+  async getDashboardSummary() {
+    return this.makeRequest('GET', '/analytics/dashboard-summary');
+  }
+
+  async logSale(itemId, quantitySold, revenue = null, notes = null) {
+    const params = { item_id: itemId, quantity_sold: quantitySold };
+    if (revenue) params.revenue = revenue;
+    if (notes) params.notes = notes;
+    return this.makeRequest('POST', '/analytics/sales-log', params);
+  }
+
+  async updateAnalytics() {
+    return this.makeRequest('POST', '/analytics/update-analytics');
+  }
 }
 
 export default new APIClient(); 

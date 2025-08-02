@@ -12,6 +12,7 @@ const Layout = ({ children }) => {
     { path: '/stock', label: 'Stock Management', icon: FaBoxes },
     { path: '/categories', label: 'Categories', icon: FaTags },
     { path: '/items', label: 'Items', icon: FaBox },
+    { path: '/analytics', label: 'Analytics', icon: FaChartBar },
   ];
 
   return (

@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import CategoryManagement from './components/CategoryManagement';
 import ItemManagement from './components/ItemManagement';
 import StockManagement from './components/StockManagement';
+import Analytics from './components/Analytics';
 import Layout from './components/Layout';
 
 const PrivateRoute = ({ children }) => {
@@ -28,6 +29,7 @@ const AppRoutes = () => {
           <Route path="/categories" element={<CategoryManagement />} />
           <Route path="/items" element={<ItemManagement />} />
           <Route path="/stock" element={<StockManagement />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/login" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
