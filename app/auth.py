@@ -58,7 +58,10 @@ def verify_token(token: str) -> Optional[str]:
 
 def authenticate_user(db: Session, username: str, password: str) -> Optional[models.User]:
     """Authenticate a user with username and password"""
-    user = db.query(models.User).filter(models.User.username == username).first()
+    # Normalize username to lowercase
+    normalized_username = username.lower().strip()
+    
+    user = db.query(models.User).filter(models.User.username == normalized_username).first()
     if not user:
         return None
     if not verify_password(password, user.hashed_password):

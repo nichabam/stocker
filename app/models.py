@@ -137,3 +137,9 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     last_login = Column(DateTime, nullable=True)
+    
+    def __init__(self, **kwargs):
+        # Ensure username is always lowercase
+        if 'username' in kwargs:
+            kwargs['username'] = kwargs['username'].lower().strip()
+        super().__init__(**kwargs)

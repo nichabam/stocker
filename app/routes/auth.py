@@ -27,8 +27,24 @@ def get_db():
 @router.post("/register")
 def register_user(username: str, password: str, db: Session = Depends(get_db)):
     """Register a new user"""
+    # Normalize username to lowercase
+    normalized_username = username.lower().strip()
+    
+    # Validate username
+    if not normalized_username:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username cannot be empty"
+        )
+    
+    if len(normalized_username) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be at least 3 characters long"
+        )
+    
     # Check if username already exists
-    existing_user = db.query(models.User).filter(models.User.username == username).first()
+    existing_user = db.query(models.User).filter(models.User.username == normalized_username).first()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,7 +53,7 @@ def register_user(username: str, password: str, db: Session = Depends(get_db)):
     
     # Create new user
     hashed_password = get_password_hash(password)
-    user = models.User(username=username, hashed_password=hashed_password)
+    user = models.User(username=normalized_username, hashed_password=hashed_password)
     
     db.add(user)
     db.commit()
@@ -52,7 +68,10 @@ def register_user(username: str, password: str, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """Login and get access token"""
-    user = authenticate_user(db, form_data.username, form_data.password)
+    # Normalize username to lowercase
+    normalized_username = form_data.username.lower().strip()
+    
+    user = authenticate_user(db, normalized_username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

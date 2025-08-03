@@ -13,10 +13,18 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
+    // Normalize username to lowercase
+    const normalizedUsername = username.toLowerCase().trim();
+
+    if (!normalizedUsername || !password) {
+      setError('Username and password are required');
+      return;
+    }
+
     try {
       const success = isRegistering 
-        ? await register(username, password)
-        : await login(username, password);
+        ? await register(normalizedUsername, password)
+        : await login(normalizedUsername, password);
       
       if (success) {
         // Login/Register successful - redirect will be handled by App.js
@@ -55,9 +63,12 @@ const Login = () => {
               className="form-control"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
+              placeholder="Enter username (will be converted to lowercase)"
               required
             />
+            <small style={{ color: '#666', fontSize: '12px' }}>
+              Username will be converted to lowercase automatically
+            </small>
           </div>
 
           <div className="form-group">
