@@ -43,10 +43,6 @@ A comprehensive inventory management system designed for small stores and coffee
 - **Axios** - HTTP client for API communication
 - **CSS Grid/Flexbox** - Responsive layout
 
-### Deployment
-- **AWS Free Tier** - EC2 instance for hosting
-- **Uvicorn** - ASGI server for FastAPI
-
 ## Setup Instructions
 
 ### 1. Install Dependencies
@@ -193,7 +189,7 @@ npm start  # Development server
 npm run build  # Production build
 ```
 
-## Deployment
+<!-- ## Deployment (Future)
 
 The application is designed for AWS deployment with:
 - EC2 instance for backend hosting
@@ -201,7 +197,7 @@ The application is designed for AWS deployment with:
 - S3 for static file storage
 - CloudFront for content delivery
 
-## Future Enhancements
+## Other Future Enhancements
 
 - Real-time updates with WebSockets
 - Advanced analytics dashboard
@@ -209,4 +205,4 @@ The application is designed for AWS deployment with:
 - Mobile app version
 - Multi-tenant architecture
 - Role-based access control
-- Advanced ML models for better predictions
+- Advanced ML models for better predictions -->
