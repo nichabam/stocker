@@ -102,7 +102,7 @@ npm start
 
 The React app will be available at `http://localhost:3000`
 
-## API Endpoints
+<!-- ## API Endpoints
 
 ### Authentication
 - `POST /auth/register` - User registration
@@ -121,7 +121,7 @@ The React app will be available at `http://localhost:3000`
 - `GET /analytics/restock-predictions` - Get restock predictions
 - `GET /analytics/cost-optimization` - Get cost optimization data
 - `GET /analytics/sales-performance` - Get sales performance metrics
-- `GET /analytics/menu-recommendations` - Get menu optimization suggestions
+- `GET /analytics/menu-recommendations` - Get menu optimization suggestions -->
 
 ## Project Structure
 
